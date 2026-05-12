@@ -18,24 +18,10 @@ jobs:
           git config user.name "KernelSU Bot"
           git config user.email "bot@github.com"
       
-      - name: Clone KernelSU-Next
+      - name: make
         run: |
-          git clone https://github.com/KernelSU-Next/KernelSU-Next.git
-          cd KernelSU-Next
-          git checkout next
-      
-      - name: Check GKI compatibility
-        run: |
-          # Para kernel 6.6.89, use branch específico
-          cd KernelSU-Next
-          git log --oneline -10 kernel/
-      
-      - name: Run integration for GKI
-        run: |
-          cd KernelSU-Next
-          # Script específico para GKI
-          bash kernel/setup.sh --gki
-      
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -
+
       - name: Verify integration
         run: |
           # Verifica se integrou corretamente
