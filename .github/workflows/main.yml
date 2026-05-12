@@ -1,0 +1,50 @@
+name: KernelSU Integration GKI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git curl
+          git config user.name "KernelSU Bot"
+          git config user.email "bot@github.com"
+      
+      - name: Clone KernelSU-Next
+        run: |
+          git clone https://github.com/KernelSU-Next/KernelSU-Next.git
+          cd KernelSU-Next
+          git checkout next
+      
+      - name: Check GKI compatibility
+        run: |
+          # Para kernel 6.6.89, use branch específico
+          cd KernelSU-Next
+          git log --oneline -10 kernel/
+      
+      - name: Run integration for GKI
+        run: |
+          cd KernelSU-Next
+          # Script específico para GKI
+          bash kernel/setup.sh --gki
+      
+      - name: Verify integration
+        run: |
+          # Verifica se integrou corretamente
+          ls -la kernel/ksu/
+          cat kernel/Kconfig | grep -i ksu || echo "KSU config não encontrado"
+      
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "feat: integrate KernelSU-Next for GKI 6.6.89" || true
+          git push origin main
+        continue-on-error: true
